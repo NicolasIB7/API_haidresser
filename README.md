@@ -23,7 +23,7 @@ API restful acerca de un servicio de peluqueria, donde:
   
   4) PosgreSQL
   
-  5) Sequelize
+  4) Sequelize   
   
   6) Jest
   
