@@ -3,6 +3,7 @@
 ## Descripción
 
 API restful acerca de un servicio de peluqueria, donde:
+
 - El cliente podrá registrarse y loguearse de forma segura aplicando JWT (json web token), podrá reservar un turno donde podrá elegir el tipo de servicio que desea y efectuar la reserva eligiendo fecha y horario. Además podrá dejar una reseña por el servicio dado.
   
     
@@ -14,25 +15,25 @@ API restful acerca de un servicio de peluqueria, donde:
 
 ## Tecnologías a utilizar:
 
-  -Typescript
+  1) Typescript
   
-  -Node.js
+  2) Node.js
   
-  -Express
+  3) Express
   
-  -PosgreSQL
+  4) PosgreSQL
   
-  -Sequelize
+  5)Sequelize
   
-  -Jest
+  6) Jest
   
-  -Supertest
+  7) Supertest
   
-  -Auth
+  8) Auth
   
-  -JWT
+  9) JWT
   
-  -Docker
+  10) Docker
 
 ## Diagrama entidad-relación
 
