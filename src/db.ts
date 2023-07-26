@@ -1,9 +1,9 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
-import { Sequelize } from 'sequelize';
-import fs from 'fs';
-import path from 'path';
+import { Sequelize } from "sequelize";
+import fs from "fs";
+import path from "path";
 
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
@@ -37,11 +37,11 @@ modelDefiners.forEach((model) => {
   const modelInstance = model(sequelize);
   const modelName = modelInstance.name;
 
-  if (modelName === 'Client') {
+  if (modelName === "Client") {
     db.Client = modelInstance;
   }
 
-  if (modelName === 'Hairdresser') {
+  if (modelName === "Hairdresser") {
     db.Hairdresser = modelInstance;
   }
 });
