@@ -4,6 +4,7 @@ dotenv.config();
 import { Sequelize } from "sequelize";
 import fs from "fs";
 import path from "path";
+import Client from "./models/Client";
 
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
@@ -20,34 +21,45 @@ const sequelize = new Sequelize(
 
 const basename = path.basename(__filename);
 
+interface Models {
+  Client: any; // Reemplaza 'any' con el tipo correcto para el modelo 'Client'
+  Hairdresser:any
+  // Agrega otros modelos aquí si los tienes, por ejemplo: Hairdresser: any;
+}
+
 const modelDefiners: any[] = [];
 
 fs.readdirSync(path.join(__dirname, "/models"))
   .filter(
     (file) =>
-      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js"
+      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".ts"
   )
   .forEach((file) => {
     modelDefiners.push(require(path.join(__dirname, "/models", file)).default);
+
   });
 
-const db: any = { conn: sequelize };
+const db: Models & { conn: Sequelize } = { conn: sequelize } as Models & { conn: Sequelize };
+
 
 modelDefiners.forEach((model) => {
-  const modelInstance = model(sequelize);
-  const modelName = modelInstance.name;
+  if (typeof model === "function") {
+    const modelInstance = model(sequelize);
+    const modelName = modelInstance.name;
 
-  if (modelName === "Client") {
-    db.Client = modelInstance;
-  }
+    if (modelName === "Client") {
+      db.Client = modelInstance;
 
-  if (modelName === "Hairdresser") {
-    db.Hairdresser = modelInstance;
+    }
+    if (modelName === "Hairdresser") {
+      db.Hairdresser = modelInstance;
+    }
+
+    // Si tienes más modelos, puedes agregarlos de manera similar aquí
   }
 });
 
-// Configurar relaciones entre los modelos (ejemplo)
-// db.Client.hasMany(db.Hairdresser);
-// db.Hairdresser.belongsTo(db.Client);
 
 export default db;
+
+

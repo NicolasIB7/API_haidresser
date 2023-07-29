@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { Sequelize } from "sequelize";
-import { genSalt, hash } from "bcrypt-ts";
+var bcrypt = require('bcryptjs');
+//import bcrypt  from 'bcryptjs';
 
 interface ClientAttributes {
   id: number;
@@ -8,7 +9,7 @@ interface ClientAttributes {
   lastname: string;
   email: string;
   password: string;
-  repassword: string;
+  // repassword: string;
   date: string;
   dni: number;
   photo: string;
@@ -20,10 +21,12 @@ interface ClientCreationAttributes extends Optional<ClientAttributes, "id"> {}
 
 export interface ClientInstance
   extends Model<ClientAttributes, ClientCreationAttributes>,
-    ClientAttributes {}
+    ClientAttributes {
+      comparePassword(candidatePassword: string): Promise<boolean>;
+    }
 
-module.exports = (sequelize: Sequelize) => {
-  const Client = sequelize.define<ClientInstance>(
+  const Client = (sequelize: Sequelize) => {
+  const clientModel= sequelize.define<ClientInstance>(
     "Client",
     {
       id: {
@@ -49,25 +52,25 @@ module.exports = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      repassword: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      // repassword: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      // },
 
       date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
       },
       dni: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       photo: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       phone: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       location: {
@@ -81,8 +84,8 @@ module.exports = (sequelize: Sequelize) => {
         beforeSave: async (client: ClientInstance) => {
           try {
             if (client.changed("password") || client.isNewRecord) {
-              const salt = await genSalt(10);
-              client.password = await hash(client.password, salt);
+              const salt = await bcrypt.genSalt(10);
+              client.password = await bcrypt.hash(client.password, salt);
             }
           } catch (error) {
             throw new Error("Fail to hash password");
@@ -91,6 +94,15 @@ module.exports = (sequelize: Sequelize) => {
       },
     }
   );
+  clientModel.prototype.comparePassword = async function (candidatePassword:string) {
 
-  return Client;
+    return await bcrypt.compare(candidatePassword, this.password)
+  };
+
+return clientModel
+
 };
+
+
+
+export default Client;

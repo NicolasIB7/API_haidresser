@@ -1,5 +1,8 @@
 import db from "../db";
-import axios from "axios";
+import { generateToken } from "../utils/generateToken";
+
+
+
 
 interface ClientData {
   name: string;
@@ -28,9 +31,24 @@ export const register = async (data: ClientData) => {
   }
 };
 
-export const login = (resp: ClientDataLogin) => {
+export const login = async (data: ClientDataLogin) => {
   try {
+    const email = data.email;
+    const password = data.password;
+
+    const client = await db.Client.findOne({where:{email}});
+    if(!client) throw {message:'Client not found'};
+    
+    const confirmPassword = await client.comparePassword(password);
+    if(!confirmPassword) throw {message:'Password is incorrect'}
+
+    // const token= generateToken(client.id)
+
+
+    return generateToken(client.id);
+
+
   } catch (error) {
-    console.log(error);
+    throw error
   }
 };

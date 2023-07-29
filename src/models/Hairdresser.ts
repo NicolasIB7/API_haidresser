@@ -1,14 +1,14 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { Sequelize } from "sequelize";
-import { genSalt, hash } from "bcrypt-ts";
-
+//import { genSalt, hash } from "bcrypt-ts";
+var bcrypt = require('bcryptjs');
 interface HairdresserAttributes {
   id: number;
   name: string;
   lastname: string;
   email: string;
   password: string;
-  repassword: string;
+  // repassword: string;
   date: string;
   dni: number;
   photo: string;
@@ -25,8 +25,8 @@ export interface HairdresserInstance
   extends Model<HairdresserAttributes, HairdresserCreationAttributes>,
     HairdresserAttributes {}
 
-module.exports = (sequelize: Sequelize) => {
-  const Hairdresser = sequelize.define<HairdresserInstance>(
+    const Hairdresser = (sequelize: Sequelize) => {
+  return sequelize.define<HairdresserInstance>(
     "Hairdresser",
     {
       id: {
@@ -52,24 +52,24 @@ module.exports = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      repassword: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      // repassword: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      // },
       date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
       },
       dni: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       photo: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       phone: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       location: {
@@ -90,8 +90,8 @@ module.exports = (sequelize: Sequelize) => {
         beforeSave: async (hairdresser: HairdresserInstance) => {
           try {
             if (hairdresser.changed("password") || hairdresser.isNewRecord) {
-              const salt = await genSalt(10);
-              hairdresser.password = await hash(hairdresser.password, salt);
+              const salt = await bcrypt.genSalt(10);
+              hairdresser.password = await bcrypt.hash(hairdresser.password, salt);
             }
           } catch (error) {
             throw new Error("Fail to hash password");
@@ -101,5 +101,6 @@ module.exports = (sequelize: Sequelize) => {
     }
   );
 
-  return Hairdresser;
 };
+
+export default Hairdresser;

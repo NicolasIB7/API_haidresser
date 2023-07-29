@@ -1,13 +1,14 @@
 import express, { Express, Request, Response } from 'express';
 const morgan = require('morgan');
 const app = express();
-const authRouter = require('./routes/auth.route.ts')
+const authRouter = require('./routes/auth.route.ts');
+const clientRouter = require('./routes/client.route.ts')
 
 app.use(morgan('dev'));
 app.use(express.json());
 
 app.use("/api/V1", authRouter);
-
+app.use("/api/V1", clientRouter);
 
 
 
